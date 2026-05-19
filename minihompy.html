@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리의 공간 ✦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Nanum+Myeongjo:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+  /* ─── CSS Variables ─── */
+  :root {
+    --cream: #faf6f0;
+    --parchment: #f2ead8;
+    --blush: #e8c4b8;
+    --rose: #c9897a;
+    --dusty-rose: #b07068;
+    --mauve: #9e7b7b;
+    --warm-brown: #6b4f4f;
+    --dark: #3a2e2e;
+    --text: #4a3838;
+    --text-light: #8a7070;
+    --border: #ddd0c0;
+    --gold: #c9a96e;
+    --gold-light: #e8d5a8;
+    --white-soft: rgba(255,255,255,0.7);
+    --shadow: 0 4px 24px rgba(100,70,70,0.10);
+    --shadow-hover: 0 8px 32px rgba(100,70,70,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--cream);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(232,196,184,0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(201,169,110,0.15) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9897a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    font-family: 'Noto Serif KR', serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── 음악 플레이어 ─── */
+  #music-bar {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    background: rgba(250,246,240,0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #music-bar:hover { box-shadow: var(--shadow-hover); }
+  #music-bar .note { font-size: 14px; animation: bounce 1.2s infinite ease-in-out; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  #music-bar .song-info { font-size: 11px; color: var(--text-light); max-width: 180px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  #music-bar .play-btn { background: var(--rose); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  #music-bar .play-btn:hover { background: var(--dusty-rose); }
+
+  /* ─── 헤더 ─── */
+  #site-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    position: relative;
+  }
+  .header-deco {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .site-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--warm-brown);
+    line-height: 1.2;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .site-subtitle {
+    font-size: 12px;
+    color: var(--text-light);
+    letter-spacing: 2px;
+  }
+  .header-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px auto;
+    max-width: 300px;
+    justify-content: center;
+  }
+  .header-divider::before, .header-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .header-divider::after { background: linear-gradient(to left, transparent, var(--gold)); }
+  .header-ornament { color: var(--gold); font-size: 14px; }
+
+  /* ─── 네비게이션 ─── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,246,240,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+  }
+  nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 0;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  nav ul li a {
+    display: block;
+    padding: 14px 18px;
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-light);
+    transition: color 0.2s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+  }
+  nav ul li a:hover, nav ul li a.active { color: var(--rose); }
+
+  /* ─── 메인 레이아웃 ─── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ─── 섹션 공통 ─── */
+  .section {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--warm-brown);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  /* ─── 카드 ─── */
+  .card {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--warm-brown);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ─── HOME 섹션 ─── */
+  .home-couple-display {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-bottom: 32px;
+  }
+  .char-card {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+  }
+  .char-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+  .char-image-area {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, var(--parchment), var(--blush));
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .char-image-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .char-image-area .upload-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-light);
+    font-size: 12px;
+    text-align: center;
+    padding: 20px;
+    background: rgba(250,246,240,0.85);
+    transition: opacity 0.3s;
+  }
+  .char-image-area img ~ .upload-hint { opacity: 0; }
+  .char-image-area:hover .upload-hint { opacity: 1 !important; }
+  .upload-hint-icon { font-size: 28px; }
+  .char-info {
+    padding: 16px 18px 20px;
+  }
+  .char-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-style: italic;
+    color: var(--warm-brown);
+    margin-bottom: 4px;
+  }
+  .char-name[contenteditable="true"]:focus { outline: none; border-bottom: 1px dashed var(--rose); }
+  .char-tag {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .char-desc {
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.7;
+  }
+  .char-desc[contenteditable="true"]:focus { outline: none; }
+
+  .couple-middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 60px;
+  }
+  .heart-icon { font-size: 28px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+  .couple-symbol {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: var(--rose);
+    letter-spacing: 2px;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  /* ─── D-DAY / 기념일 ─── */
+  .dday-bar {
+    background: linear-gradient(135deg, rgba(201,137,122,0.12), rgba(201,169,110,0.12));
+    border: 1px solid var(--blush);
+    border-radius: 12px;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .dday-count {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-style: italic;
+    color: var(--rose);
+    line-height: 1;
+  }
+  .dday-label { font-size: 11px; color: var(--text-light); letter-spacing: 1px; margin-top: 4px; }
+  .dday-set { text-align: center; }
+  .dday-date-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: var(--text);
+    padding: 4px 8px;
+    cursor: pointer;
+    text-align: center;
+    width: 140px;
+  }
+  .dday-date-input:focus { outline: none; border-bottom-color: var(--rose); }
+
+  /* ─── 이미지 갤러리 ─── */
+  .gallery-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { background: var(--parchment); border-color: var(--rose); color: var(--rose); }
+  .btn-primary { background: var(--rose); border-color: var(--rose); color: white; }
+  .btn-primary:hover { background: var(--dusty-rose); border-color: var(--dusty-rose); color: white; }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--thumb-size, 160px), 1fr));
+    gap: 12px;
+  }
+  .gallery-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+    group: true;
+  }
+  .gallery-item:hover { transform: scale(1.03); box-shadow: var(--shadow-hover); }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gallery-item .item-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(58,46,46,0.5);
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .gallery-item:hover .item-overlay { opacity: 1; }
+  .overlay-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .overlay-btn:hover { background: white; }
+  .gallery-upload-btn {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    color: var(--text-light);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+  }
+  .gallery-upload-btn:hover { border-color: var(--rose); color: var(--rose); background: rgba(201,137,122,0.05); }
+
+  .size-slider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-light);
+  }
+  .size-slider input[type=range] {
+    width: 80px;
+    accent-color: var(--rose);
+  }
+
+  /* ─── 라이트박스 ─── */
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,20,0.92);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: 8px; }
+  #lightbox .lb-caption { color: rgba(255,255,255,0.7); font-size: 13px; font-style: italic; }
+  #lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  #lightbox-close:hover { opacity: 1; }
+
+  /* ─── 인용구 ─── */
+  .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .quote-grid { grid-template-columns: 1fr; } }
+  .quote-card {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    position: relative;
+    transition: box-shadow 0.3s;
+  }
+  .quote-card:hover { box-shadow: var(--shadow-hover); }
+  .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    color: var(--gold-light);
+    position: absolute;
+    top: 4px;
+    left: 16px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.8;
+    color: var(--text);
+    margin-top: 16px;
+    min-height: 60px;
+  }
+  .quote-text[contenteditable="true"]:focus { outline: none; }
+  .quote-source {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-light);
+    margin-top: 12px;
+    text-align: right;
+  }
+  .quote-source[contenteditable="true"]:focus { outline: none; border-bottom: 1px dashed var(--border); }
+  .quote-tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--parchment);
+    color: var(--mauve);
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .quote-tag.novel { background: rgba(201,169,110,0.15); border-color: var(--gold-light); color: var(--gold); }
+  .quote-tag.drama { background: rgba(201,137,122,0.15); border-color: var(--blush); color: var(--rose); }
+  .quote-tag.movie { background: rgba(158,123,123,0.15); border-color: #c9b0b0; color: var(--mauve); }
+  .quote-tag.music { background: rgba(107,79,79,0.15); border-color: #b09090; color: var(--warm-brown); }
+  .quote-tag.etc { background: rgba(232,213,168,0.3); border-color: var(--gold-light); color: var(--gold); }
+  .quote-delete {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--border);
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+  .quote-delete:hover { color: var(--rose); }
+
+  /* ─── 인용구 추가 모달 ─── */
+  #quote-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,20,0.7);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #quote-modal.open { display: flex; }
+  .modal-box {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(30,20,20,0.3);
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-style: italic;
+    color: var(--warm-brown);
+    margin-bottom: 20px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 11px; letter-spacing: 1px; color: var(--text-light); margin-bottom: 6px; display: block; }
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--rose);
+  }
+  .form-textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
+  .form-select { cursor: pointer; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ─── 타임라인 ─── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--blush), transparent);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+    animation: fadeIn 0.5s ease;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--rose);
+    border: 2px solid var(--cream);
+    box-shadow: 0 0 0 2px var(--blush);
+  }
+  .timeline-date {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .timeline-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--warm-brown);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+  .timeline-title[contenteditable="true"]:focus { outline: none; border-bottom: 1px dashed var(--rose); }
+  .timeline-body {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+  .timeline-body[contenteditable="true"]:focus { outline: none; }
+  .timeline-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    background: rgba(201,137,122,0.1);
+    border: 1px solid var(--blush);
+    color: var(--rose);
+    margin-top: 8px;
+  }
+  .timeline-delete {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: none;
+    border: none;
+    color: var(--border);
+    cursor: pointer;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+  .timeline-delete:hover { color: var(--rose); }
+
+  /* ─── 타임라인 추가 모달 ─── */
+  #timeline-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,20,0.7);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #timeline-modal.open { display: flex; }
+
+  /* ─── 자캐 설정 ─── */
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 28px;
+    align-items: start;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 600px) { .profile-layout { grid-template-columns: 1fr; } }
+  .profile-img-area {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    aspect-ratio: 3/4;
+    background: var(--parchment);
+    cursor: pointer;
+    position: relative;
+  }
+  .profile-img-area img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .profile-img-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-light);
+    font-size: 12px;
+    background: rgba(250,246,240,0.85);
+    transition: opacity 0.2s;
+  }
+  .profile-img-area img ~ .profile-img-hint { opacity: 0; }
+  .profile-img-area:hover .profile-img-hint { opacity: 1 !important; }
+
+  .profile-table { width: 100%; border-collapse: collapse; }
+  .profile-table tr { border-bottom: 1px solid rgba(200,180,170,0.3); }
+  .profile-table tr:last-child { border-bottom: none; }
+  .profile-table td { padding: 10px 8px; font-size: 13px; vertical-align: top; }
+  .profile-table td:first-child { width: 100px; color: var(--text-light); font-size: 11px; letter-spacing: 1px; padding-right: 16px; white-space: nowrap; }
+  .profile-table td[contenteditable="true"]:focus { outline: none; background: rgba(201,137,122,0.05); border-radius: 4px; }
+
+  .char-tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .char-tag-pill {
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--mauve);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .char-tag-pill:hover { background: var(--blush); border-color: var(--rose); color: var(--warm-brown); }
+
+  /* ─── 탭 ─── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+  .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  /* ─── 게시판/다이어리 ─── */
+  .diary-entry {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    transition: box-shadow 0.3s;
+    position: relative;
+  }
+  .diary-entry:hover { box-shadow: var(--shadow-hover); }
+  .diary-date { font-size: 11px; color: var(--text-light); letter-spacing: 1px; margin-bottom: 8px; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .diary-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--warm-brown); margin-bottom: 10px; }
+  .diary-title[contenteditable="true"]:focus { outline: none; border-bottom: 1px dashed var(--rose); }
+  .diary-body { font-size: 13px; line-height: 1.9; color: var(--text); }
+  .diary-body[contenteditable="true"]:focus { outline: none; }
+  .diary-delete {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--border);
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+  .diary-delete:hover { color: var(--rose); }
+
+  /* ─── 다이어리 추가 모달 ─── */
+  #diary-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,20,0.7);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #diary-modal.open { display: flex; }
+
+  /* ─── 음악 추가 모달 ─── */
+  #music-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,20,0.7);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #music-modal.open { display: flex; }
+
+  /* ─── 음악 리스트 ─── */
+  .playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .playlist-item:hover { box-shadow: var(--shadow); border-color: var(--blush); }
+  .playlist-item.playing { background: rgba(201,137,122,0.08); border-color: var(--rose); }
+  .pl-num { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-light); min-width: 20px; }
+  .pl-note { font-size: 16px; }
+  .pl-info { flex: 1; }
+  .pl-title { font-size: 13px; color: var(--text); }
+  .pl-artist { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+  .pl-delete { background: none; border: none; color: var(--border); cursor: pointer; font-size: 13px; transition: color 0.2s; }
+  .pl-delete:hover { color: var(--rose); }
+
+  /* ─── 방명록 ─── */
+  .guestbook-entry {
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+  .gb-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .gb-name { font-size: 13px; font-weight: 600; color: var(--warm-brown); }
+  .gb-date { font-size: 11px; color: var(--text-light); font-style: italic; }
+  .gb-text { font-size: 13px; line-height: 1.7; color: var(--text); }
+
+  .gb-form { margin-top: 20px; }
+  .gb-form input, .gb-form textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .gb-form input:focus, .gb-form textarea:focus { outline: none; border-color: var(--rose); }
+  .gb-form textarea { resize: vertical; min-height: 70px; }
+
+  /* ─── 편집 토글 ─── */
+  #edit-toggle {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 1000;
+    background: var(--warm-brown);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 18px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #edit-toggle:hover { background: var(--dark); }
+  #edit-toggle.editing { background: var(--rose); }
+
+  /* ─── 편집모드 안내 ─── */
+  #edit-banner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(201,137,122,0.95);
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    z-index: 999;
+  }
+  #edit-banner.visible { display: block; }
+
+  /* ─── 반응형 ─── */
+  @media (max-width: 600px) {
+    .home-couple-display { grid-template-columns: 1fr; }
+    .couple-middle { flex-direction: row; padding-top: 0; }
+    .couple-symbol { writing-mode: horizontal-tb; }
+    nav ul li a { padding: 12px 10px; font-size: 12px; }
+    .dday-bar { flex-direction: column; text-align: center; }
+  }
+
+  /* ─── 숨김 input ─── */
+  input[type="file"] { display: none; }
+
+  /* ─── 스크롤바 ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--rose); }
+
+  /* ─── 장식 ─── */
+  .floral-deco { color: var(--gold); opacity: 0.6; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<!-- 편집 배너 -->
+<div id="edit-banner">✏️ 편집 모드 활성화 — 텍스트를 클릭해 직접 수정하세요</div>
+
+<!-- 라이트박스 -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightbox-img" src="" alt="">
+  <div id="lightbox-caption" class="lb-caption"></div>
+</div>
+
+<!-- 인용구 추가 모달 -->
+<div id="quote-modal">
+  <div class="modal-box">
+    <div class="modal-title">✦ 인용구 추가</div>
+    <div class="form-group">
+      <label class="form-label">종류</label>
+      <select class="form-select" id="q-type">
+        <option value="novel">소설</option>
+        <option value="drama">드라마</option>
+        <option value="movie">영화</option>
+        <option value="music">음악/가사</option>
+        <option value="etc">기타</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">인용 텍스트</label>
+      <textarea class="form-textarea" id="q-text" placeholder="인용할 문장을 입력하세요..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">출처</label>
+      <input class="form-input" id="q-source" placeholder="작품명 · 작가/감독 등">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('quote-modal')">취소</button>
+      <button class="btn btn-primary" onclick="addQuote()">추가하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 타임라인 추가 모달 -->
+<div id="timeline-modal">
+  <div class="modal-box">
+    <div class="modal-title">✦ 서사 추가</div>
+    <div class="form-group">
+      <label class="form-label">날짜 / 시기</label>
+      <input class="form-input" id="tl-date" placeholder="예: 2024년 봄, Day 1, Episode 3...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">제목</label>
+      <input class="form-input" id="tl-title" placeholder="이 장면의 이름">
+    </div>
+    <div class="form-group">
+      <label class="form-label">내용</label>
+      <textarea class="form-textarea" id="tl-body" placeholder="어떤 일이 있었나요?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">태그 (선택)</label>
+      <input class="form-input" id="tl-tag" placeholder="예: 첫 만남, 갈등, 고백...">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('timeline-modal')">취소</button>
+      <button class="btn btn-primary" onclick="addTimeline()">추가하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 다이어리 추가 모달 -->
+<div id="diary-modal">
+  <div class="modal-box">
+    <div class="modal-title">✦ 새 다이어리</div>
+    <div class="form-group">
+      <label class="form-label">제목</label>
+      <input class="form-input" id="d-title" placeholder="제목을 입력하세요">
+    </div>
+    <div class="form-group">
+      <label class="form-label">내용</label>
+      <textarea class="form-textarea" id="d-body" placeholder="글을 작성하세요..." style="min-height:140px"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('diary-modal')">취소</button>
+      <button class="btn btn-primary" onclick="addDiary()">작성하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 음악 추가 모달 -->
+<div id="music-modal">
+  <div class="modal-box">
+    <div class="modal-title">♪ 테마 음악 추가</div>
+    <div class="form-group">
+      <label class="form-label">곡 제목</label>
+      <input class="form-input" id="m-title" placeholder="곡 제목">
+    </div>
+    <div class="form-group">
+      <label class="form-label">아티스트</label>
+      <input class="form-input" id="m-artist" placeholder="아티스트명">
+    </div>
+    <div class="form-group">
+      <label class="form-label">음악 파일 (선택)</label>
+      <input type="file" id="m-file-hidden" accept="audio/*" onchange="handleMusicFile(this)">
+      <button class="btn" onclick="document.getElementById('m-file-hidden').click()" style="width:100%">🎵 파일 선택</button>
+      <div id="m-filename" style="font-size:11px;color:var(--text-light);margin-top:6px"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('music-modal')">취소</button>
+      <button class="btn btn-primary" onclick="addMusic()">추가하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 헤더 ─── -->
+<header id="site-header">
+  <div class="header-deco">our little world</div>
+  <h1 class="site-title" id="site-title" contenteditable="false" onclick="editTitle()">우리의 이야기</h1>
+  <div class="site-subtitle" id="site-subtitle" contenteditable="false">커플 자캐 미니홈피</div>
+  <div class="header-divider"><span class="header-ornament">✦</span></div>
+</header>
+
+<!-- ─── 네비게이션 ─── -->
+<nav>
+  <ul>
+    <li><a href="#" class="nav-link active" data-section="home">홈</a></li>
+    <li><a href="#" class="nav-link" data-section="gallery">갤러리</a></li>
+    <li><a href="#" class="nav-link" data-section="chars">자캐 설정</a></li>
+    <li><a href="#" class="nav-link" data-section="quotes">인용구</a></li>
+    <li><a href="#" class="nav-link" data-section="timeline">타임라인</a></li>
+    <li><a href="#" class="nav-link" data-section="diary">다이어리</a></li>
+    <li><a href="#" class="nav-link" data-section="music">테마음악</a></li>
+    <li><a href="#" class="nav-link" data-section="guestbook">방명록</a></li>
+  </ul>
+</nav>
+
+<!-- ─── 메인 ─── -->
+<main>
+
+  <!-- HOME -->
+  <section id="sec-home" class="section active">
+    <!-- D-DAY -->
+    <div class="dday-bar">
+      <div class="dday-set">
+        <div class="dday-count" id="dday-num">D+1</div>
+        <div class="dday-label">우리가 함께한 날</div>
+      </div>
+      <div>
+        <div class="dday-label" style="margin-bottom:6px">처음 만난 날</div>
+        <input type="date" class="dday-date-input" id="dday-input" onchange="calcDday()">
+      </div>
+      <div class="dday-set">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--mauve)" id="dday-anniversary"></div>
+        <div class="dday-label">다음 기념일</div>
+      </div>
+    </div>
+
+    <!-- 커플 디스플레이 -->
+    <div class="home-couple-display">
+      <!-- 자캐 A -->
+      <div class="char-card">
+        <div class="char-image-area" onclick="triggerUpload('char-a-img', 'char-a-preview')">
+          <img id="char-a-preview" src="" alt="" style="display:none">
+          <div class="upload-hint"><span class="upload-hint-icon">🌸</span>이미지 클릭으로 업로드</div>
+        </div>
+        <input type="file" id="char-a-img" accept="image/*" onchange="previewChar('char-a-img','char-a-preview')">
+        <div class="char-info">
+          <div class="char-name" id="char-a-name" contenteditable="false">자캐 이름 A</div>
+          <div class="char-tag">character · A</div>
+          <div class="char-desc" id="char-a-short" contenteditable="false">짧은 소개를 여기에 적어주세요. 성격이나 매력 포인트 등을 간단히 써보세요.</div>
+        </div>
+      </div>
+
+      <!-- 중앙 -->
+      <div class="couple-middle">
+        <div class="heart-icon">🌹</div>
+        <div class="couple-symbol">×</div>
+        <div class="heart-icon">🌹</div>
+      </div>
+
+      <!-- 자캐 B -->
+      <div class="char-card">
+        <div class="char-image-area" onclick="triggerUpload('char-b-img', 'char-b-preview')">
+          <img id="char-b-preview" src="" alt="" style="display:none">
+          <div class="upload-hint"><span class="upload-hint-icon">🌙</span>이미지 클릭으로 업로드</div>
+        </div>
+        <input type="file" id="char-b-img" accept="image/*" onchange="previewChar('char-b-img','char-b-preview')">
+        <div class="char-info">
+          <div class="char-name" id="char-b-name" contenteditable="false">자캐 이름 B</div>
+          <div class="char-tag">character · B</div>
+          <div class="char-desc" id="char-b-short" contenteditable="false">짧은 소개를 여기에 적어주세요. 성격이나 매력 포인트 등을 간단히 써보세요.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 커플 소개 -->
+    <div class="card">
+      <div class="card-title"><span class="floral-deco">✦</span> 우리에 대하여</div>
+      <p id="home-about" contenteditable="false" style="font-size:13px;line-height:1.9;color:var(--text)">
+        이곳은 우리 둘만의 작은 세계예요. 함께 쌓아온 이야기들, 좋아하는 것들, 그리고 앞으로의 서사까지 — 모두 이 공간에 담아볼게요. ✦
+      </p>
+    </div>
+
+    <!-- 최근 타임라인 미리보기 -->
+    <div class="card">
+      <div class="card-title"><span class="floral-deco">✦</span> 최근 서사</div>
+      <div id="home-timeline-preview" style="color:var(--text-light);font-size:13px;font-style:italic">타임라인에 서사를 추가해보세요.</div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="sec-gallery" class="section">
+    <div class="section-title">Gallery</div>
+    <div class="section-sub">우리의 순간들</div>
+
+    <div class="gallery-controls">
+      <button class="btn btn-primary" onclick="document.getElementById('gallery-upload').click()">＋ 이미지 추가</button>
+      <input type="file" id="gallery-upload" accept="image/*" multiple onchange="addGalleryImages(this)">
+      <div class="size-slider">
+        <span>🔲</span>
+        <input type="range" min="100" max="280" value="160" oninput="changeGallerySize(this.value)">
+        <span>🖼</span>
+      </div>
+      <select class="form-select" style="width:auto;padding:8px 12px;font-size:12px" onchange="filterGallery(this.value)">
+        <option value="all">전체</option>
+        <option value="fav">⭐ 즐겨찾기</option>
+      </select>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid">
+      <!-- 기본 업로드 버튼 -->
+      <div class="gallery-upload-btn" onclick="document.getElementById('gallery-upload').click()">
+        <span style="font-size:24px">＋</span>
+        <span>이미지 추가</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARS -->
+  <section id="sec-chars" class="section">
+    <div class="section-title">Characters</div>
+    <div class="section-sub">자캐 설정</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('chars','char-a-tab',this)">자캐 A</button>
+      <button class="tab-btn" onclick="switchTab('chars','char-b-tab',this)">자캐 B</button>
+    </div>
+
+    <!-- 자캐 A 탭 -->
+    <div id="char-a-tab" class="tab-content active">
+      <div class="profile-layout">
+        <div>
+          <div class="profile-img-area" onclick="triggerUpload('char-a-profile-img','char-a-profile-preview')">
+            <img id="char-a-profile-preview" src="" alt="" style="display:none">
+            <div class="profile-img-hint"><span style="font-size:28px">🌸</span><span style="font-size:12px">이미지 업로드</span></div>
+          </div>
+          <input type="file" id="char-a-profile-img" accept="image/*" onchange="syncCharImages('a','profile','char-a-profile-img','char-a-profile-preview')">
+          <!-- 추가 이미지 -->
+          <div style="margin-top:12px">
+            <div style="font-size:11px;color:var(--text-light);letter-spacing:1px;margin-bottom:8px">추가 이미지</div>
+            <div id="char-a-extra-gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+              <div class="gallery-upload-btn" style="aspect-ratio:1;font-size:20px" onclick="document.getElementById('char-a-extra-upload').click()">＋</div>
+              <input type="file" id="char-a-extra-upload" accept="image/*" multiple onchange="addExtraImages('a',this)">
+            </div>
+          </div>
+        </div>
+        <div>
+          <table class="profile-table">
+            <tr><td>이름</td><td contenteditable="false" class="ce-cell" id="ca-name">이름</td></tr>
+            <tr><td>나이</td><td contenteditable="false" class="ce-cell" id="ca-age">나이</td></tr>
+            <tr><td>성별</td><td contenteditable="false" class="ce-cell" id="ca-gender">성별</td></tr>
+            <tr><td>키 / 체형</td><td contenteditable="false" class="ce-cell" id="ca-size">키, 체형</td></tr>
+            <tr><td>외모</td><td contenteditable="false" class="ce-cell" id="ca-look">외모 특징</td></tr>
+            <tr><td>성격</td><td contenteditable="false" class="ce-cell" id="ca-personality">성격</td></tr>
+            <tr><td>직업 / 역할</td><td contenteditable="false" class="ce-cell" id="ca-job">직업이나 역할</td></tr>
+            <tr><td>세계관</td><td contenteditable="false" class="ce-cell" id="ca-world">배경 세계관</td></tr>
+            <tr><td>좋아하는 것</td><td contenteditable="false" class="ce-cell" id="ca-likes">좋아하는 것들</td></tr>
+            <tr><td>싫어하는 것</td><td contenteditable="false" class="ce-cell" id="ca-dislikes">싫어하는 것들</td></tr>
+            <tr><td>특기 / 능력</td><td contenteditable="false" class="ce-cell" id="ca-skill">특기나 능력</td></tr>
+            <tr><td>비고</td><td contenteditable="false" class="ce-cell" id="ca-note">기타 설정</td></tr>
+          </table>
+          <div style="margin-top:20px">
+            <div style="font-size:11px;color:var(--text-light);letter-spacing:1px;margin-bottom:10px">태그</div>
+            <div id="ca-tags" class="char-tags-container"></div>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <input class="form-input" id="ca-tag-input" placeholder="태그 입력 후 Enter" style="flex:1" onkeydown="addTag(event,'ca-tags','ca-tag-input')">
+            </div>
+          </div>
+          <div style="margin-top:20px">
+            <div class="card-title" style="font-size:15px;margin-bottom:12px">상세 설정</div>
+            <div contenteditable="false" class="ce-cell" id="ca-detail" style="font-size:13px;line-height:1.9;color:var(--text);min-height:80px">자캐 A의 자세한 설정이나 배경, 과거 이야기 등을 자유롭게 작성해주세요.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 자캐 B 탭 -->
+    <div id="char-b-tab" class="tab-content">
+      <div class="profile-layout">
+        <div>
+          <div class="profile-img-area" onclick="triggerUpload('char-b-profile-img','char-b-profile-preview')">
+            <img id="char-b-profile-preview" src="" alt="" style="display:none">
+            <div class="profile-img-hint"><span style="font-size:28px">🌙</span><span style="font-size:12px">이미지 업로드</span></div>
+          </div>
+          <input type="file" id="char-b-profile-img" accept="image/*" onchange="syncCharImages('b','profile','char-b-profile-img','char-b-profile-preview')">
+          <div style="margin-top:12px">
+            <div style="font-size:11px;color:var(--text-light);letter-spacing:1px;margin-bottom:8px">추가 이미지</div>
+            <div id="char-b-extra-gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+              <div class="gallery-upload-btn" style="aspect-ratio:1;font-size:20px" onclick="document.getElementById('char-b-extra-upload').click()">＋</div>
+              <input type="file" id="char-b-extra-upload" accept="image/*" multiple onchange="addExtraImages('b',this)">
+            </div>
+          </div>
+        </div>
+        <div>
+          <table class="profile-table">
+            <tr><td>이름</td><td contenteditable="false" class="ce-cell" id="cb-name">이름</td></tr>
+            <tr><td>나이</td><td contenteditable="false" class="ce-cell" id="cb-age">나이</td></tr>
+            <tr><td>성별</td><td contenteditable="false" class="ce-cell" id="cb-gender">성별</td></tr>
+            <tr><td>키 / 체형</td><td contenteditable="false" class="ce-cell" id="cb-size">키, 체형</td></tr>
+            <tr><td>외모</td><td contenteditable="false" class="ce-cell" id="cb-look">외모 특징</td></tr>
+            <tr><td>성격</td><td contenteditable="false" class="ce-cell" id="cb-personality">성격</td></tr>
+            <tr><td>직업 / 역할</td><td contenteditable="false" class="ce-cell" id="cb-job">직업이나 역할</td></tr>
+            <tr><td>세계관</td><td contenteditable="false" class="ce-cell" id="cb-world">배경 세계관</td></tr>
+            <tr><td>좋아하는 것</td><td contenteditable="false" class="ce-cell" id="cb-likes">좋아하는 것들</td></tr>
+            <tr><td>싫어하는 것</td><td contenteditable="false" class="ce-cell" id="cb-dislikes">싫어하는 것들</td></tr>
+            <tr><td>특기 / 능력</td><td contenteditable="false" class="ce-cell" id="cb-skill">특기나 능력</td></tr>
+            <tr><td>비고</td><td contenteditable="false" class="ce-cell" id="cb-note">기타 설정</td></tr>
+          </table>
+          <div style="margin-top:20px">
+            <div style="font-size:11px;color:var(--text-light);letter-spacing:1px;margin-bottom:10px">태그</div>
+            <div id="cb-tags" class="char-tags-container"></div>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <input class="form-input" id="cb-tag-input" placeholder="태그 입력 후 Enter" style="flex:1" onkeydown="addTag(event,'cb-tags','cb-tag-input')">
+            </div>
+          </div>
+          <div style="margin-top:20px">
+            <div class="card-title" style="font-size:15px;margin-bottom:12px">상세 설정</div>
+            <div contenteditable="false" class="ce-cell" id="cb-detail" style="font-size:13px;line-height:1.9;color:var(--text);min-height:80px">자캐 B의 자세한 설정이나 배경, 과거 이야기 등을 자유롭게 작성해주세요.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTES -->
+  <section id="sec-quotes" class="section">
+    <div class="section-title">Quotations</div>
+    <div class="section-sub">마음에 담은 문장들</div>
+    <div style="margin-bottom:20px">
+      <button class="btn btn-primary" onclick="openModal('quote-modal')">＋ 인용구 추가</button>
+    </div>
+    <div class="quote-grid" id="quote-grid">
+      <!-- 예시 -->
+      <div class="quote-card" data-type="novel">
+        <span class="quote-mark">"</span>
+        <span class="quote-tag novel">소설</span>
+        <button class="quote-delete" onclick="this.parentElement.remove()">✕</button>
+        <div class="quote-text" contenteditable="false">사랑한다는 건, 그 사람의 어두운 면까지도 빛으로 만들어버리는 일.</div>
+        <div class="quote-source" contenteditable="false">— 예시 소설 · 작가명</div>
+      </div>
+      <div class="quote-card" data-type="drama">
+        <span class="quote-mark">"</span>
+        <span class="quote-tag drama">드라마</span>
+        <button class="quote-delete" onclick="this.parentElement.remove()">✕</button>
+        <div class="quote-text" contenteditable="false">당신 곁에 있는 것만으로도, 오늘 하루는 충분했어요.</div>
+        <div class="quote-source" contenteditable="false">— 예시 드라마</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="sec-timeline" class="section">
+    <div class="section-title">Our Story</div>
+    <div class="section-sub">서사 타임라인</div>
+    <div style="margin-bottom:24px">
+      <button class="btn btn-primary" onclick="openModal('timeline-modal')">＋ 서사 추가</button>
+    </div>
+    <div class="timeline" id="timeline-list">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">예시 · Day 1</div>
+        <div class="timeline-title" contenteditable="false">처음 만남</div>
+        <div class="timeline-body" contenteditable="false">두 사람이 처음 마주친 그 날. 이곳에 서사를 기록해보세요.</div>
+        <span class="timeline-tag">시작</span>
+        <button class="timeline-delete" onclick="this.parentElement.remove()">✕</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIARY -->
+  <section id="sec-diary" class="section">
+    <div class="section-title">Diary</div>
+    <div class="section-sub">작성자의 기록</div>
+    <div style="margin-bottom:20px">
+      <button class="btn btn-primary" onclick="openModal('diary-modal')">＋ 새 다이어리</button>
+    </div>
+    <div id="diary-list">
+      <div class="diary-entry">
+        <button class="diary-delete" onclick="this.parentElement.remove()">✕</button>
+        <div class="diary-date" id="diary-date-0"></div>
+        <div class="diary-title" contenteditable="false">첫 번째 기록</div>
+        <div class="diary-body" contenteditable="false">이곳에 이 미니홈피에 대한 이야기, 커플 자캐에 대한 감상, 또는 자유로운 글을 기록해보세요.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MUSIC -->
+  <section id="sec-music" class="section">
+    <div class="section-title">Theme Music</div>
+    <div class="section-sub">우리의 사운드트랙</div>
+    <div style="margin-bottom:20px">
+      <button class="btn btn-primary" onclick="openModal('music-modal')">＋ 곡 추가</button>
+    </div>
+    <audio id="audio-player" style="display:none"></audio>
+    <div id="playlist">
+      <div style="color:var(--text-light);font-size:13px;font-style:italic">곡을 추가해보세요. 파일을 올리면 직접 재생도 가능해요.</div>
+    </div>
+  </section>
+
+  <!-- GUESTBOOK -->
+  <section id="sec-guestbook" class="section">
+    <div class="section-title">Guestbook</div>
+    <div class="section-sub">방명록</div>
+    <div id="guestbook-list"></div>
+    <div class="card gb-form">
+      <div class="card-title" style="margin-bottom:16px">✦ 방명록 남기기</div>
+      <input id="gb-name" placeholder="이름">
+      <textarea id="gb-msg" placeholder="메시지를 남겨주세요 ✦"></textarea>
+      <button class="btn btn-primary" onclick="addGuestbook()">남기기</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── 고정 버튼 ─── -->
+<button id="edit-toggle" onclick="toggleEdit()">✏️ 편집 모드</button>
+
+<div id="music-bar" onclick="togglePlay()">
+  <span class="note">♪</span>
+  <span class="song-info" id="music-bar-info">테마 음악을 추가해보세요</span>
+  <button class="play-btn" id="play-btn">▶</button>
+</div>
+
+<script>
+// ─── 상태 ───
+let isEditing = false;
+let galleryItems = [];
+let currentAudio = null;
+let currentTrackIdx = -1;
+let playlist = [];
+let isFavFilter = false;
+
+// ─── 초기화 ───
+window.onload = () => {
+  const today = new Date();
+  document.getElementById('diary-date-0').textContent =
+    today.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+  calcDday();
+  updateHomeTLPreview();
+};
+
+// ─── 네비게이션 ───
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const sec = link.dataset.section;
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-' + sec).classList.add('active');
+  });
+});
+
+// ─── 편집 모드 ───
+function toggleEdit() {
+  isEditing = !isEditing;
+  const btn = document.getElementById('edit-toggle');
+  const banner = document.getElementById('edit-banner');
+  btn.textContent = isEditing ? '✓ 편집 완료' : '✏️ 편집 모드';
+  btn.classList.toggle('editing', isEditing);
+  banner.classList.toggle('visible', isEditing);
+
+  // contenteditable 토글
+  const targets = document.querySelectorAll('[contenteditable], .ce-cell');
+  targets.forEach(el => {
+    el.contentEditable = isEditing ? 'true' : 'false';
+  });
+
+  // 사이트 타이틀 편집
+  document.getElementById('site-title').contentEditable = isEditing;
+  document.getElementById('site-subtitle').contentEditable = isEditing;
+}
+
+function editTitle() {
+  if (isEditing) return; // 편집모드면 기본 동작
+}
+
+// ─── D-DAY ───
+function calcDday() {
+  const input = document.getElementById('dday-input').value;
+  if (!input) return;
+  const start = new Date(input);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  start.setHours(0,0,0,0);
+  const diff = Math.floor((today - start) / 86400000);
+  document.getElementById('dday-num').textContent = 'D+' + (diff + 1);
+
+  // 다음 기념일 계산
+  const next = new Date(start);
+  while (next <= today) next.setFullYear(next.getFullYear() + 1);
+  const daysUntil = Math.ceil((next - today) / 86400000);
+  document.getElementById('dday-anniversary').textContent =
+    next.toLocaleDateString('ko-KR', {month:'long',day:'numeric'}) + ' (D-' + daysUntil + ')';
+}
+
+// ─── 이미지 업로드 유틸 ───
+function triggerUpload(inputId, previewId) {
+  document.getElementById(inputId).click();
+}
+
+function previewChar(inputId, previewId) {
+  const file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = document.getElementById(previewId);
+  img.src = url;
+  img.style.display = 'block';
+}
+
+function syncCharImages(char, type, inputId, previewId) {
+  const file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = document.getElementById(previewId);
+  img.src = url;
+  img.style.display = 'block';
+  // 홈 카드도 sync
+  const homePreview = document.getElementById('char-' + char + '-preview');
+  if (homePreview) { homePreview.src = url; homePreview.style.display = 'block'; }
+}
+
+// ─── 자캐 추가 이미지 ───
+function addExtraImages(char, input) {
+  const gallery = document.getElementById('char-' + char + '-extra-gallery');
+  Array.from(input.files).forEach(file => {
+    const url = URL.createObjectURL(file);
+    const item = document.createElement('div');
+    item.style.cssText = 'position:relative;aspect-ratio:1;border-radius:6px;overflow:hidden;border:1px solid var(--border);cursor:pointer';
+    item.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover" onclick="openLightbox('${url}','')">
+      <button onclick="this.parentElement.remove()" style="position:absolute;top:2px;right:4px;background:rgba(58,46,46,0.7);border:none;color:white;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer">✕</button>`;
+    gallery.insertBefore(item, gallery.lastElementChild);
+  });
+}
+
+// ─── 갤러리 ───
+function addGalleryImages(input) {
+  const grid = document.getElementById('gallery-grid');
+  Array.from(input.files).forEach(file => {
+    const url = URL.createObjectURL(file);
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.dataset.url = url;
+    item.dataset.fav = 'false';
+    const caption = file.name.replace(/\.[^/.]+$/, '');
+    item.innerHTML = `
+      <img src="${url}" alt="${caption}">
+      <div class="item-overlay">
+        <button class="overlay-btn" title="크게 보기" onclick="openLightbox('${url}','${caption}')">🔍</button>
+        <button class="overlay-btn" title="즐겨찾기" onclick="toggleFav(this)">⭐</button>
+        <button class="overlay-btn" title="삭제" onclick="this.closest('.gallery-item').remove()">✕</button>
+      </div>`;
+    grid.insertBefore(item, grid.lastElementChild);
+  });
+  input.value = '';
+}
+
+function changeGallerySize(val) {
+  document.getElementById('gallery-grid').style.setProperty('--thumb-size', val + 'px');
+}
+
+function toggleFav(btn) {
+  const item = btn.closest('.gallery-item');
+  const isFav = item.dataset.fav === 'true';
+  item.dataset.fav = !isFav;
+  btn.style.opacity = isFav ? '1' : '0.5';
+}
+
+function filterGallery(val) {
+  document.querySelectorAll('#gallery-grid .gallery-item').forEach(item => {
+    if (val === 'fav') {
+      item.style.display = item.dataset.fav === 'true' ? '' : 'none';
+    } else {
+      item.style.display = '';
+    }
+  });
+}
+
+// ─── 라이트박스 ───
+function openLightbox(url, caption) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-caption').textContent = caption;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightbox')) closeLightbox();
+});
+
+// ─── 인용구 ───
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('#quote-modal, #timeline-modal, #diary-modal, #music-modal').forEach(modal => {
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+});
+
+function addQuote() {
+  const type = document.getElementById('q-type').value;
+  const text = document.getElementById('q-text').value.trim();
+  const source = document.getElementById('q-source').value.trim();
+  if (!text) return;
+
+  const tagLabels = {novel:'소설',drama:'드라마',movie:'영화',music:'음악/가사',etc:'기타'};
+  const card = document.createElement('div');
+  card.className = 'quote-card';
+  card.dataset.type = type;
+  card.innerHTML = `
+    <span class="quote-mark">"</span>
+    <span class="quote-tag ${type}">${tagLabels[type]}</span>
+    <button class="quote-delete" onclick="this.parentElement.remove()">✕</button>
+    <div class="quote-text" contenteditable="${isEditing}">${text}</div>
+    <div class="quote-source" contenteditable="${isEditing}">— ${source}</div>`;
+  document.getElementById('quote-grid').appendChild(card);
+
+  document.getElementById('q-text').value = '';
+  document.getElementById('q-source').value = '';
+  closeModal('quote-modal');
+}
+
+// ─── 타임라인 ───
+function addTimeline() {
+  const date = document.getElementById('tl-date').value.trim();
+  const title = document.getElementById('tl-title').value.trim();
+  const body = document.getElementById('tl-body').value.trim();
+  const tag = document.getElementById('tl-tag').value.trim();
+  if (!title) return;
+
+  const item = document.createElement('div');
+  item.className = 'timeline-item';
+  item.innerHTML = `
+    <div class="timeline-dot"></div>
+    <div class="timeline-date">${date}</div>
+    <div class="timeline-title" contenteditable="${isEditing}">${title}</div>
+    <div class="timeline-body" contenteditable="${isEditing}">${body}</div>
+    ${tag ? `<span class="timeline-tag">${tag}</span>` : ''}
+    <button class="timeline-delete" onclick="this.parentElement.remove();updateHomeTLPreview()">✕</button>`;
+  document.getElementById('timeline-list').appendChild(item);
+
+  document.getElementById('tl-date').value = '';
+  document.getElementById('tl-title').value = '';
+  document.getElementById('tl-body').value = '';
+  document.getElementById('tl-tag').value = '';
+  closeModal('timeline-modal');
+  updateHomeTLPreview();
+}
+
+function updateHomeTLPreview() {
+  const items = document.querySelectorAll('#timeline-list .timeline-item');
+  const preview = document.getElementById('home-timeline-preview');
+  if (items.length === 0) {
+    preview.innerHTML = '<span style="color:var(--text-light);font-style:italic">타임라인에 서사를 추가해보세요.</span>';
+    return;
+  }
+  const last = items[items.length - 1];
+  const title = last.querySelector('.timeline-title')?.textContent || '';
+  const date = last.querySelector('.timeline-date')?.textContent || '';
+  const body = last.querySelector('.timeline-body')?.textContent || '';
+  preview.innerHTML = `
+    <div style="font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:4px">${date}</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--warm-brown);margin-bottom:6px">${title}</div>
+    <div style="font-size:12px;color:var(--text-light);line-height:1.7">${body.slice(0,80)}${body.length > 80 ? '...' : ''}</div>`;
+}
+
+// ─── 다이어리 ───
+function addDiary() {
+  const title = document.getElementById('d-title').value.trim();
+  const body = document.getElementById('d-body').value.trim();
+  if (!title) return;
+
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+  const entry = document.createElement('div');
+  entry.className = 'diary-entry';
+  entry.innerHTML = `
+    <button class="diary-delete" onclick="this.parentElement.remove()">✕</button>
+    <div class="diary-date">${today}</div>
+    <div class="diary-title" contenteditable="${isEditing}">${title}</div>
+    <div class="diary-body" contenteditable="${isEditing}">${body}</div>`;
+  document.getElementById('diary-list').prepend(entry);
+
+  document.getElementById('d-title').value = '';
+  document.getElementById('d-body').value = '';
+  closeModal('diary-modal');
+}
+
+// ─── 음악 ───
+let pendingMusicFile = null;
+
+function handleMusicFile(input) {
+  if (input.files[0]) {
+    pendingMusicFile = input.files[0];
+    document.getElementById('m-filename').textContent = '✓ ' + input.files[0].name;
+    if (!document.getElementById('m-title').value) {
+      document.getElementById('m-title').value = input.files[0].name.replace(/\.[^/.]+$/, '');
+    }
+  }
+}
+
+function addMusic() {
+  const title = document.getElementById('m-title').value.trim();
+  const artist = document.getElementById('m-artist').value.trim();
+  if (!title) return;
+
+  const trackUrl = pendingMusicFile ? URL.createObjectURL(pendingMusicFile) : null;
+  const idx = playlist.length;
+  playlist.push({ title, artist, url: trackUrl });
+
+  const pl = document.getElementById('playlist');
+  if (pl.querySelector('div[style*="font-style"]')) pl.innerHTML = '';
+
+  const item = document.createElement('div');
+  item.className = 'playlist-item';
+  item.dataset.idx = idx;
+  item.onclick = () => playTrack(idx);
+  item.innerHTML = `
+    <span class="pl-num">${idx + 1}</span>
+    <span class="pl-note">♪</span>
+    <div class="pl-info">
+      <div class="pl-title">${title}</div>
+      ${artist ? `<div class="pl-artist">${artist}</div>` : ''}
+    </div>
+    ${trackUrl ? '<span style="font-size:11px;color:var(--gold)">▶ 재생가능</span>' : ''}
+    <button class="pl-delete" onclick="event.stopPropagation();removeTrack(${idx})">✕</button>`;
+  pl.appendChild(item);
+
+  document.getElementById('m-title').value = '';
+  document.getElementById('m-artist').value = '';
+  document.getElementById('m-filename').textContent = '';
+  pendingMusicFile = null;
+  document.getElementById('m-file-hidden').value = '';
+  closeModal('music-modal');
+
+  updateMusicBar(title, artist);
+}
+
+function playTrack(idx) {
+  const track = playlist[idx];
+  if (!track || !track.url) return;
+  const audio = document.getElementById('audio-player');
+  audio.src = track.url;
+  audio.play();
+  currentTrackIdx = idx;
+  document.getElementById('play-btn').textContent = '⏸';
+  updateMusicBar(track.title, track.artist);
+  document.querySelectorAll('.playlist-item').forEach((el, i) => {
+    el.classList.toggle('playing', i === idx);
+  });
+}
+
+function togglePlay() {
+  const audio = document.getElementById('audio-player');
+  if (!audio.src) return;
+  if (audio.paused) { audio.play(); document.getElementById('play-btn').textContent = '⏸'; }
+  else { audio.pause(); document.getElementById('play-btn').textContent = '▶'; }
+}
+
+function removeTrack(idx) {
+  playlist.splice(idx, 1);
+  // 재렌더
+  const pl = document.getElementById('playlist');
+  pl.innerHTML = '';
+  if (playlist.length === 0) {
+    pl.innerHTML = '<div style="color:var(--text-light);font-size:13px;font-style:italic">곡을 추가해보세요.</div>';
+    return;
+  }
+  playlist.forEach((t, i) => {
+    const item = document.createElement('div');
+    item.className = 'playlist-item';
+    item.dataset.idx = i;
+    item.onclick = () => playTrack(i);
+    item.innerHTML = `
+      <span class="pl-num">${i + 1}</span>
+      <span class="pl-note">♪</span>
+      <div class="pl-info">
+        <div class="pl-title">${t.title}</div>
+        ${t.artist ? `<div class="pl-artist">${t.artist}</div>` : ''}
+      </div>
+      ${t.url ? '<span style="font-size:11px;color:var(--gold)">▶ 재생가능</span>' : ''}
+      <button class="pl-delete" onclick="event.stopPropagation();removeTrack(${i})">✕</button>`;
+    pl.appendChild(item);
+  });
+}
+
+function updateMusicBar(title, artist) {
+  document.getElementById('music-bar-info').textContent = title + (artist ? ' — ' + artist : '');
+}
+
+// ─── 방명록 ───
+function addGuestbook() {
+  const name = document.getElementById('gb-name').value.trim();
+  const msg = document.getElementById('gb-msg').value.trim();
+  if (!name || !msg) return;
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+  const entry = document.createElement('div');
+  entry.className = 'guestbook-entry';
+  entry.innerHTML = `
+    <div class="gb-header">
+      <span class="gb-name">${name}</span>
+      <span class="gb-date">${today}</span>
+    </div>
+    <div class="gb-text">${msg}</div>`;
+  document.getElementById('guestbook-list').prepend(entry);
+  document.getElementById('gb-name').value = '';
+  document.getElementById('gb-msg').value = '';
+}
+
+// ─── 태그 ───
+function addTag(e, containerId, inputId) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const input = document.getElementById(inputId);
+  const val = input.value.trim();
+  if (!val) return;
+  const pill = document.createElement('span');
+  pill.className = 'char-tag-pill';
+  pill.textContent = val;
+  pill.onclick = () => pill.remove();
+  document.getElementById(containerId).appendChild(pill);
+  input.value = '';
+}
+
+// ─── 탭 ───
+function switchTab(group, tabId, btn) {
+  document.querySelectorAll(`#sec-${group} .tab-content`).forEach(t => t.classList.remove('active'));
+  document.querySelectorAll(`#sec-${group} .tab-btn`).forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
